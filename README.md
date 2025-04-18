@@ -16,7 +16,7 @@ This project aims to set up a **Security Information and Event Management (SIEM)
 
 ## 🔧 Prerequisites:
 Before running the setup, ensure you have the following:
-- A **Raspberry Pi 4B** running **Ubuntu Server 22.04**.
+- A **Raspberry Pi 4B** running **Ubuntu Server 22.04.5 Server**.
 - **Wazuh Manager** is already installed and configured on a separate system to handle log collection and analysis.
 - Basic understanding of network security tools and monitoring.
 
