@@ -10,6 +10,7 @@ if [[ $? -ne 0 ]]; then
 fi
 echo "Update complete."
 
+# Install dependencies
 echo "Installing dependencies. One moment..."
 sudo apt-get install bridge-utils netplan.io -y
 if [[ $? -ne 0 ]]; then
