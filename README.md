@@ -1,1 +1,1 @@
-<img src="assets/hacker2.jpg" alt="cover" style="width:100%;" />
+<img src="assets/banner.jpg" alt="cover" style="width:100%;" />
