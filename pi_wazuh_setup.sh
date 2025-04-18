@@ -1,7 +1,9 @@
 #!/bin/bash
+# Written by Christopher Garey
+# https://github.com/cgarey2014
 
 # Begin with prerequisites
-echo "Starting bridge protocol"
+echo "Starting bridge protocol."
 echo "Updating System. Please wait..."
 sudo apt update && sudo apt upgrade -y
 if [[ $? -ne 0 ]]; then
