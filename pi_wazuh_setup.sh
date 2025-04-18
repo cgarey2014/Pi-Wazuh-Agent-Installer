@@ -55,12 +55,6 @@ for i in {1..10}; do
     fi
 done
 
-# Final check
-if [[ "$(cat /sys/class/net/br0/operstate)" != "up" ]]; then
-    echo "[!] br0 still not up after waiting. Exiting."
-    exit 1
-fi
-
 # Verify the bridge connection
 if ip addr show br0 &>/dev/null; then
   echo "br0 exists. Continuing with Wazuh installation..."
