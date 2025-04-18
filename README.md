@@ -40,14 +40,14 @@ git clone https://github.com/cgarey2014/Pi-Wazuh-Agent-Installer.git
 After cloning the repository, they can navigate to the directory where the script is located:
 
 ```bash
-cd network-siem-rpi
+cd Pi-Wazuh-Agent-Installer
 ```
 
 ### Make the Script Executable: 
 Before running the script, they need to ensure that it has execute permissions. They can do this by running:
 
 ```bash
-chmod +x start_network_monitor.sh
+chmod +x pi.sh
 ```
 
 ### Run the Script: 
