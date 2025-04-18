@@ -47,12 +47,12 @@ cd Pi-Wazuh-Agent-Installer
 Before running the script, they need to ensure that it has execute permissions. They can do this by running:
 
 ```bash
-chmod +x pi_wazuh_agent.sh
+chmod +x pi_wazuh_setup.sh
 ```
 
 ### Run the Script: 
 Finally, they can run the script with the following command:
 
 ```bash
-./pi_wazuh_agent.sh
+./pi_wazuh_setup.sh
 ```
