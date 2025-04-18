@@ -22,35 +22,35 @@ Before running the setup, ensure you have the following:
 
 ## 📝 Installation and Usage:
 
-## Install Git (if not already installed):
+### Install Git (if not already installed):
 If git is not installed on the system, they can install it by running the following command:
 
 ```bash
 sudo apt update
 sudo apt install git
 ```
-## Clone the Repository: 
+### Clone the Repository: 
 To download the script from GitHub, they need to clone your repository. They can do this by running the following command in the terminal:
 
 ```bash
 git clone https://github.com/cgarey2014/Pi-Wazuh-Agent-Installer.git
 ```
 
-## Navigate to the Script Directory: 
+### Navigate to the Script Directory: 
 After cloning the repository, they can navigate to the directory where the script is located:
 
 ```bash
 cd network-siem-rpi
 ```
 
-## Make the Script Executable: 
+### Make the Script Executable: 
 Before running the script, they need to ensure that it has execute permissions. They can do this by running:
 
 ```bash
 chmod +x start_network_monitor.sh
 ```
 
-## Run the Script: 
+### Run the Script: 
 Finally, they can run the script with the following command:
 
 ```bash
