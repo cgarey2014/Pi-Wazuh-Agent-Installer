@@ -1,9 +1,7 @@
 #!/bin/bash
-# Written by Christopher Garey
-# https://github.com/cgarey2014
 
 # Begin with prerequisites
-echo "Starting bridge protocol."
+echo "Starting bridge protocol"
 echo "Updating System. Please wait..."
 sudo apt update && sudo apt upgrade -y
 if [[ $? -ne 0 ]]; then
@@ -98,10 +96,105 @@ if ip addr show br0 &>/dev/null; then
   sudo systemctl start wazuh-agent
   # Check if wazuh-agent is active and enabled
   if systemctl is-active --quiet wazuh-agent && systemctl is-enabled --quiet wazuh-agent; then
-    echo "Service is enabled at startup and running."
+    echo "Wazuh installation complete. Service is enabled at startup and running."
   else
     echo "Error encountered enabling service. Please check system logs for more information."
   fi
+  
+  # Begin Suricat installation
+  echo "Installing Suricata. Please wait..."
+  sudo apt install suricata -y
+  if [[ $? -ne 0 ]]; then
+    echo "An error occurred during Suricata installation. Exiting."
+    exit 1
+  fi
+  echo "Suricata installation complete."
+  
+  # Enable Suricata to start on boot
+  echo "Enabling Suricata system service"
+  sudo systemctl enable suricata
+  sudo systemctl start suricata
+  
+  # Check if suricata is active and enabled
+  if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
+    echo "Suricata installation complete. Service is enabled at startup and running."
+  else
+    echo "Error encountered enabling service. Please check system logs for more information."
+  fi
+  
+  # Configure Suricata to monitor the bridged interface br0
+  echo "Configuring Suricata to monitor the bridged interface br0"
+  sudo sed -i 's/af-packet:/af-packet:\n  - interface: br0/' /etc/suricata/suricata.yaml
+  
+  # Restart Suricata to apply changes
+  echo "Restarting Suricata to apply changes"
+  sudo systemctl restart suricata
+  
+  # Check if suricata is active and enabled
+  if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
+    echo "suricata.yaml has been updated to monitor br0 and restarted."
+  else
+    echo "Error encountered enabling service. Please check system logs for more information."
+  fi
+  
+  # Enable Suricata rule sources
+  echo "Enabling Suricata rule sources"
+  sudo suricata-update
+  
+  # Check if suricata-update is active and enabled
+  if systemctl is-active --quiet suricata-update && systemctl is-enabled --quiet suricata-update; then
+    echo "Suricata rule sources have been enabled."
+  else
+    echo "Error encountered enabling service. Please check system logs for more information."
+  fi
+  
+  # Restart Suricata to apply changes
+  echo "Restarting Suricata to apply changes"
+  sudo systemctl restart suricata
+  
+  # Check if suricata is active and enabled
+  if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
+    echo "Suricata rule sources have been enabled and Suricata has been restarted."
+  else
+    echo "Error encountered enabling service. Please check system logs for more information."
+  fi
+  
+  # Integrate Suricata logs with Wazuh
+  echo "Integrating Suricata logs with Wazuh"
+  sudo mkdir -p /var/ossec/logs/archives
+  sudo mkdir -p /var/ossec/logs/archives/suricata
+  sudo chown -R wazuh:wazuh /var/ossec/logs/archives/suricata
+  sudo chmod -R 750 /var/ossec/logs/archives/suricata
+  
+  # Create a symbolic link to Suricata logs
+  echo "Creating symbolic link to Suricata logs"
+  sudo ln -s /var/log/suricata/eve.json /var/ossec/logs/archives/suricata/eve.json
+  
+  # Check if the symbolic link was created successfully
+  if [[ -L /var/ossec/logs/archives/suricata/eve.json ]]; then
+    echo "Symbolic link to Suricata logs created successfully."
+  else
+    echo "Failed to create symbolic link to Suricata logs. Exiting."
+    exit 1
+  fi
+  
+  # Restart Wazuh agent to apply changes
+  echo "Restarting Wazuh agent to apply changes"
+  sudo systemctl restart wazuh-agent
+  
+  # Check if wazuh-agent is active and enabled
+  if systemctl is-active --quiet wazuh-agent && systemctl is-enabled --quiet wazuh-agent; then
+    echo "Wazuh agent has been restarted."
+  else
+    echo "Error encountered enabling service. Please check system logs for more information."
+  fi
+  
+  # Let user know the installation is complete
+  echo "Installation complete. Wazuh agent and Suricata are installed and configured to monitor the bridged interface br0."
+  echo "Please check the logs for any errors or issues."
+  echo "You can view the Suricata logs at /var/log/suricata/eve.json"
+  echo "You can view the Wazuh logs at /var/ossec/logs/archives/suricata/eve.json"
+  echo "You can view the Wazuh agent logs at /var/ossec/logs/ossec.log"
 else
   echo "br0 does not exist. Exiting."
   exit 1
