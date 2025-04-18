@@ -43,6 +43,24 @@ echo "Adjustment complete."
 
 echo "Applying new configuration..."
 sudo netplan apply
+
+# Wait for br0 to appear (max 10 seconds)
+for i in {1..10}; do
+    if ip link show br0 > /dev/null 2>&1; then
+        echo "[+] br0 detected"
+        break
+    else
+        echo "[-] Waiting for br0 to come up..."
+        sleep 1
+    fi
+done
+
+# Final check
+if ! ip link show br0 > /dev/null 2>&1; then
+    echo "[!] Interface br0 does not exist after waiting. Exiting."
+    exit 1
+fi
+
 if ! ip addr show br0 | grep -q "inet"; then
   echo "Bridge interface br0 is not up. Exiting."
   exit 1
