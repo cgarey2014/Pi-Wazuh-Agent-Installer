@@ -4,6 +4,7 @@
 echo "Starting bridge protocol"
 echo "Updating System. Please wait..."
 sudo apt-get update && sudo apt-get upgrade -y
+sudo apt install curl
 if [[ $? -ne 0 ]]; then
   echo "An error occurred during system update. Exiting."
   exit 1
@@ -64,7 +65,7 @@ if ip addr show br0 &>/dev/null; then
   curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | sudo gpg --dearmor -o /usr/share/keyrings/wazuh.gpg 
 
   # Add the Wazuh apt-get repository
-  echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt-get/ stable main" | sudo tee /etc/apt-get/sources.list.d/wazuh.list
+  echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | sudo tee /etc/apt/sources.list.d/wazuh.list
 
   # Update the package list and install Wazuh
   echo "Starting install. Please wait.."
