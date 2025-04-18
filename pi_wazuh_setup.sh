@@ -3,7 +3,7 @@
 # Begin with prerequisites
 echo "Starting bridge protocol"
 echo "Updating System. Please wait..."
-sudo apt update && sudo apt upgrade -y
+sudo apt-get update && sudo apt-get upgrade -y
 if [[ $? -ne 0 ]]; then
   echo "An error occurred during system update. Exiting."
   exit 1
@@ -11,7 +11,7 @@ fi
 echo "Update complete."
 
 echo "Installing dependencies. One moment..."
-sudo apt install bridge-utils netplan.io -y
+sudo apt-get install bridge-utils netplan.io -y
 if [[ $? -ne 0 ]]; then
   echo "An error occurred during dependencies installation. Exiting."
   exit 1
@@ -53,15 +53,15 @@ if ip addr show br0 &>/dev/null; then
   echo "br0 exists. Continuing with Wazuh installation..."
 
   # Import the Wazuh GPG key
-  echo "Adding GPG key and APT repository for Wazuh:"
+  echo "Adding GPG key and apt-get repository for Wazuh:"
   curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | sudo gpg --dearmor -o /usr/share/keyrings/wazuh.gpg 
 
-  # Add the Wazuh APT repository
-  echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | sudo tee /etc/apt/sources.list.d/wazuh.list
+  # Add the Wazuh apt-get repository
+  echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt-get/ stable main" | sudo tee /etc/apt-get/sources.list.d/wazuh.list
 
   # Update the package list and install Wazuh
   echo "Starting install. Please wait.."
-  sudo apt update && sudo apt install wazuh-agent -y
+  sudo apt-get update && sudo apt-get install wazuh-agent -y
   if [[ $? -ne 0 ]]; then
     echo "An error occurred during Wazuh installation. Exiting."
     exit 1
@@ -103,7 +103,7 @@ if ip addr show br0 &>/dev/null; then
   
   # Begin Suricat installation
   echo "Installing Suricata. Please wait..."
-  sudo apt install suricata -y
+  sudo apt-get install suricata -y
   if [[ $? -ne 0 ]]; then
     echo "An error occurred during Suricata installation. Exiting."
     exit 1
@@ -121,22 +121,18 @@ if ip addr show br0 &>/dev/null; then
   else
     echo "Error encountered enabling service. Please check system logs for more information."
   fi
-  
-  # Configure Suricata to monitor the bridged interface br0
-  echo "Configuring Suricata to monitor the bridged interface br0"
-  sudo sed -i 's/af-packet:/af-packet:\n  - interface: br0/' /etc/suricata/suricata.yaml
-  
-  # Restart Suricata to apply changes
-  echo "Restarting Suricata to apply changes"
-  sudo systemctl restart suricata
-  
-  # Check if suricata is active and enabled
-  if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
-    echo "suricata.yaml has been updated to monitor br0 and restarted."
+  # Check if suricata-update is installed
+  echo "Checking if suricata-update is installed"
+  if ! command -v suricata-update &> /dev/null; then
+    echo "suricata-update could not be found. Installing..."
+    sudo apt-get install suricata-update -y
+    if [[ $? -ne 0 ]]; then
+      echo "An error occurred during suricata-update installation. Exiting."
+      exit 1
+    fi
   else
-    echo "Error encountered enabling service. Please check system logs for more information."
+    echo "suricata-update is already installed."
   fi
-  
   # Enable Suricata rule sources
   echo "Enabling Suricata rule sources"
   sudo suricata-update
@@ -155,6 +151,21 @@ if ip addr show br0 &>/dev/null; then
   # Check if suricata is active and enabled
   if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
     echo "Suricata rule sources have been enabled and Suricata has been restarted."
+  else
+    echo "Error encountered enabling service. Please check system logs for more information."
+  fi
+  
+  # Configure Suricata to run in Intrustion detection mode
+  echo "Configuring Suricata to run in Intrusion Detection mode"
+  sudo sed -i 's/af-packet:/af-packet:\n  - interface: br0\n    cluster-id: 99\n    cluster-type: cluster_flow\n    defrag: yes\n    copy-mode: ips/' /etc/suricata/suricata.yaml
+  
+  # Restart Suricata to apply changes
+  echo "Restarting Suricata to apply changes"
+  sudo systemctl restart suricata
+  
+  # Check if suricata is active and enabled
+  if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
+    echo "Suricata has been configured to run in Intrusion Detection mode and restarted."
   else
     echo "Error encountered enabling service. Please check system logs for more information."
   fi
