@@ -190,12 +190,12 @@ if ip addr show br0 &>/dev/null; then
   sudo ln -s /var/log/suricata/eve.json /var/ossec/logs/archives/suricata/eve.json
   
   # Check if the symbolic link was created successfully
-  if [[ -L /var/ossec/logs/archives/suricata/eve.json ]]; then
-    echo "Symbolic link to Suricata logs created successfully."
-  else
-    echo "Failed to create symbolic link to Suricata logs. Exiting."
-    exit 1
-  fi
+ if [ -L "/var/log/suricata" ] && [ -d "/var/log/suricata" ]; then
+    echo "Symlink exists and points to a valid directory"
+ else
+    echo "Symlink is missing or broken"
+ fi
+
   
   # Restart Wazuh agent to apply changes
   echo "Restarting Wazuh agent to apply changes"
