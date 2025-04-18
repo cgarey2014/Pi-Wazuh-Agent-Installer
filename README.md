@@ -16,7 +16,7 @@ This project aims to set up a **Security Information and Event Management (SIEM)
 
 ## 🔧 Prerequisites:
 Before running the setup, ensure you have the following:
-- A **Raspberry Pi 4B** running **Ubuntu Server 22.04**.
+- A **Raspberry Pi 4B** running **Ubuntu Server 22.04.5 Server**.
 - **Wazuh Manager** is already installed and configured on a separate system to handle log collection and analysis.
 - Basic understanding of network security tools and monitoring.
 
@@ -40,19 +40,19 @@ git clone https://github.com/cgarey2014/Pi-Wazuh-Agent-Installer.git
 After cloning the repository, they can navigate to the directory where the script is located:
 
 ```bash
-cd network-siem-rpi
+cd Pi-Wazuh-Agent-Installer
 ```
 
 ### Make the Script Executable: 
-Before running the script, they need to ensure that it has execute permissions. They can do this by running:
+Before running the script, you need to ensure that it has execute permissions. They can do this by running:
 
 ```bash
-chmod +x start_network_monitor.sh
+chmod +x pi_wazuh_setup.sh
 ```
 
 ### Run the Script: 
 Finally, they can run the script with the following command:
 
 ```bash
-./start_network_monitor.sh
+./pi_wazuh_setup.sh
 ```

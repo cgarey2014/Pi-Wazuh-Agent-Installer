@@ -10,6 +10,7 @@ if [[ $? -ne 0 ]]; then
 fi
 echo "Update complete."
 
+# Install dependencies
 echo "Installing dependencies. One moment..."
 sudo apt-get install bridge-utils netplan.io -y
 if [[ $? -ne 0 ]]; then
@@ -112,6 +113,7 @@ if ip addr show br0 &>/dev/null; then
   echo "Enabling Wazuh Agent system service"
   sudo systemctl enable wazuh-agent
   sudo systemctl start wazuh-agent
+  
   # Check if wazuh-agent is active and enabled
   if systemctl is-active --quiet wazuh-agent && systemctl is-enabled --quiet wazuh-agent; then
     echo "Wazuh installation complete. Service is enabled at startup and running."
@@ -119,7 +121,7 @@ if ip addr show br0 &>/dev/null; then
     echo "Error encountered enabling service. Please check system logs for more information."
   fi
   
-  # Begin Suricat installation
+  # Begin Suricata installation
   echo "Installing Suricata. Please wait..."
   sudo apt-get install suricata -y
   if [[ $? -ne 0 ]]; then
@@ -139,6 +141,7 @@ if ip addr show br0 &>/dev/null; then
   else
     echo "Error encountered enabling service. Please check system logs for more information."
   fi
+  
   # Check if suricata-update is installed
   echo "Checking if suricata-update is installed"
   if ! command -v suricata-update &> /dev/null; then
@@ -151,6 +154,7 @@ if ip addr show br0 &>/dev/null; then
   else
     echo "suricata-update is already installed."
   fi
+  
   # Enable Suricata rule sources
   echo "Enabling Suricata rule sources"
   sudo suricata-update
@@ -166,14 +170,14 @@ if ip addr show br0 &>/dev/null; then
   echo "Restarting Suricata to apply changes"
   sudo systemctl restart suricata
   
-  # Check if suricata is active and enabled
+  # Check if Suricata is active and enabled
   if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
     echo "Suricata rule sources have been enabled and Suricata has been restarted."
   else
     echo "Error encountered enabling service. Please check system logs for more information."
   fi
   
-  # Configure Suricata to run in Intrustion detection mode
+  # Configure Suricata to run in Intrusion Detection mode
   echo "Configuring Suricata to run in Intrusion Detection mode"
   sudo sed -i 's/af-packet:/af-packet:\n  - interface: br0\n    cluster-id: 99\n    cluster-type: cluster_flow\n    defrag: yes\n    copy-mode: ips/' /etc/suricata/suricata.yaml
   
@@ -181,7 +185,7 @@ if ip addr show br0 &>/dev/null; then
   echo "Restarting Suricata to apply changes"
   sudo systemctl restart suricata
   
-  # Check if suricata is active and enabled
+  # Check if Suricata is active and enabled
   if systemctl is-active --quiet suricata && systemctl is-enabled --quiet suricata; then
     echo "Suricata has been configured to run in Intrusion Detection mode and restarted."
   else
@@ -218,7 +222,7 @@ if ip addr show br0 &>/dev/null; then
     echo "Error encountered enabling service. Please check system logs for more information."
   fi
   
-  # Let user know the installation is complete
+  # Let the user know the installation is complete
   echo "Installation complete. Wazuh agent and Suricata are installed and configured to monitor the bridged interface br0."
   echo "Please check the logs for any errors or issues."
   echo "You can view the Suricata logs at /var/log/suricata/eve.json"
