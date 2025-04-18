@@ -54,16 +54,6 @@ for i in {1..10}; do
         sleep 1
     fi
 done
-# Wait for br0 to be up (max 10 seconds)
-for i in {1..10}; do
-    if [[ "$(cat /sys/class/net/br0/operstate)" == "up" ]]; then
-        echo "[+] br0 is up"
-        break
-    else
-        echo "[-] Waiting for br0 to be up..."
-        sleep 1
-    fi
-done
 
 # Final check
 if [[ "$(cat /sys/class/net/br0/operstate)" != "up" ]]; then
